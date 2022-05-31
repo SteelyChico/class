@@ -76,6 +76,7 @@ inte_show(n: Inte): String
     neg: neg_show(n.num) 
     pos: pos_show(n.num) 
   }
+
 // Converts Inte to Nat
 inte_to_nat(n: Inte): Nat
   case n { 
@@ -125,43 +126,177 @@ dec(a: Inte): Inte
     }
   }
 
+p2: Inte
+   int(true, 2)
+
+p4: Inte
+  int(true, 4)   
+
+p5: Inte
+  int(true, 5)
+
+p6: Inte
+  int(true, 6)
+
+p9: Inte
+  int(true, 9)
+
+n5: Inte
+  int(false, 5)
+
+n2: Inte
+  int(false, 2)
+
+n0: Inte
+  int(false, 0)
+
+n4: Inte
+  int(false, 4)
+
+n6: Inte
+  int(false, 6)
+
 // Doubles an Integer
 // int(false, 4) = -8
 // int(false, 1) = -2
 // int(true,  2) = +4
 dbl(a: Inte): Inte 
-  let nata = inte_to_nat(a)
   case a{
-    neg: case a.num{
-      one:
-      pred:
-    }
+    neg: dec(dec(dbl(inc(a))))
     pos: case a.num{
-      
+      zero: Inte.pos(Pos.zero)
+      succ: inc(inc(dbl(Inte.pos(a.num.pred))))
     }
   }
+
+teste1:_
+  inte_show(dbl(p6))
 
 // Adds two Integers
 // int(false, 4) + int(false, 2) = -6
 // int(false, 4) + int(true,  2) = -2
+//vih me ajudou nessa
 add(a: Inte, b: Inte): Inte
-  ?add
+  let nata = inte_to_nat(a)
+  let natb = inte_to_nat(b)
+  case a{
+    neg: case b{
+      neg: let negab = Nat.add(nata, natb)
+      int(false, negab)
+      pos: case b.num{
+        zero: a
+        succ: case Nat.eql(nata, natb){
+          true: Inte.pos(Pos.zero)
+          false: let subab = Nat.sub(nata, natb)
+            int(true, subab)
+        }
+      }
+    }
+    pos: case b{
+      neg: case a.num{
+        zero: b
+        succ: case Nat.eql(nata, natb){
+          true: Inte.pos(Pos.zero)
+          false: let subab = Nat.sub(nata, natb)
+            int(true, subab)
+        }
+      }
+      pos: let somaab = Nat.add(nata, natb)
+        int(true, somaab)
+    }
+  }
+  // case a{
+  //   neg: case a.num(
+  //     one: case b{
+  //       neg: case b.num{
+  //         one: dec(Inte.neg(Neg.one))
+  //         pred: dec(b.num)
+  //       }
+  //       pos: case b.num{
+  //         zero: a.num
+  //         succ: dec(Inte.pos(b.num))
+  //       }
+  //     }
+  //     pred: case b{
+
+  //     }
+  //   )
+  //   pos: Nat.add(nata, natb)
+  // }
+
+teste2:_
+  inte_show(add(p2, p6))
 
 // Multiplies two Integers
 // int(false, 2) * int(true, 3)  = -6
 // int(false, 4) * int(false, 5) = +20
 mul(a: Inte, b: Inte): Inte
-  ?mul
+  let nata = inte_to_nat(a)
+  let natb = inte_to_nat(b)
+  case a b{
+    neg neg: let mulab = Nat.mul(nata, natb)
+      int(true, mulab)
+    neg pos: case b.num{
+      zero: Inte.pos(Pos.zero)
+      succ: let mulab = Nat.mul(nata, natb)
+        int(false, mulab)
+    }
+    pos neg: case a.num{
+      zero: Inte.pos(Pos.zero)
+      succ: let mulab = Nat.mul(nata, natb)
+        int(false, mulab)
+    }
+    pos pos: let mulab = Nat.mul(nata, natb)
+      int(true, mulab)
+  }
 
 // Subtracts two Integers
 // int(false, 6) - int(false, 6) = +0
 // int(false, 4) - int(false, 6) = +2
 sub(a: Inte, b: Inte): Inte
-  ?sub
+  let nata = inte_to_nat(a)
+  let natb = inte_to_nat(b)
+  case a b{
+    neg neg: case Nat.eql(nata, natb){
+      true: Inte.pos(Pos.zero)
+      false: case Nat.gtn(nata, natb){
+        true: let subap = Nat.sub(nata, natb)
+          int(false, subap)
+        false: let subap = Nat.sub(natb, nata)
+          int(true, subap)
+      }
+    }
+    neg pos: let subap = Nat.add(nata, natb)
+      int(false, subap)
+    pos neg: let subap = Nat.add(nata, natb)
+      int(true, subap)
+    pos pos: case Nat.eql(nata, natb){
+      true: Inte.pos(Pos.zero)
+      false: case Nat.gtn(nata, natb){
+        true: let subap = Nat.sub(nata, natb)
+          int(true, subap)
+        false: let subap = Nat.sub(natb, nata)
+          int(false, subap)
+      }
+    }
+  }
 
 // Equal
 eql(a: Inte, b: Inte): Bool // Given two Integers, returns true if both are the same and false otherwise.
-  ?eql
+  let nata = inte_to_nat(a)
+  let natb = inte_to_nat(b)
+  case a b{
+    neg neg: case Nat.eql(nata, natb){
+      true: Bool.true
+      false: Bool.false
+    }
+    pos neg: Bool.false
+    neg pos: Bool.false
+    pos pos: case Nat.eql(nata, natb){
+      true: Bool.true
+      false: Bool.false
+    }
+  }
 
 
 // Greater than
@@ -170,25 +305,67 @@ eql(a: Inte, b: Inte): Bool // Given two Integers, returns true if both are the 
 // int(false, 2) > int(true,  0) = False
 // int(true,  0) > int(false, 2) = True
 gtn(a: Inte, b: Inte): Bool // if A > B then True else false
-  ?gtn
-
+  let nata = inte_to_nat(a)
+  let natb = inte_to_nat(b)
+  case a b{
+    neg neg: case Nat.eql(nata, natb){
+      true: Bool.false
+      false: case Nat.gtn(nata, natb){
+        true: Bool.false
+        false: Bool.true
+      }
+    }
+    neg pos: Bool.false
+    pos neg: Bool.true
+    pos pos: case Nat.eql(nata, natb){
+      true: Bool.false
+      false: case Nat.gtn(nata, natb){
+        true: Bool.true
+        false: Bool.false
+      }
+    }
+  }
 // Lower than
 // int(false, 1) < int(true,  0) = True
 // int(true,  0) < int(false, 1) = False
 ltn(a: Inte, b: Inte): Bool // if A > B then False else true
-  ?ltn
+  let nata = inte_to_nat(a)
+  let natb = inte_to_nat(b)
+  case a b{
+    neg neg: case Nat.eql(nata, natb){
+      true: Bool.false
+      false: case Nat.gtn(nata, natb){
+        true: Bool.true
+        false: Bool.false
+      }
+    }
+    neg pos: Bool.true
+    pos neg: Bool.false
+    pos pos: case Nat.eql(nata, natb){
+      true: Bool.false
+      false: case Nat.gtn(nata, natb){
+        true: Bool.false
+        false: Bool.true
+      }
+    }
+  }
 
 // Minimum
 // min(int(false, 1), int(true,  0)  = -1
 // min(int(false, 1), int(false, 3)) = -3
 min(a: Inte, b: Inte): Inte // if A < B then A else B
-  ?min
+  case ltn(a, b){
+    true: a
+    false: b
+  }
 
 // Maximum
 // max(int(false, 1), int(true,  0)) = +0
 // max(int(false, 1), int(false, 3)) = -1
 max(a: Inte, b: Inte): Inte // if A > B then A else B
-  ?max
+  case gtn(a, b){
+    true: a
+    false: b}
 
 // Half
 // Divides an Integer by two
