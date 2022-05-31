@@ -76,6 +76,12 @@ inte_show(n: Inte): String
     neg: neg_show(n.num) 
     pos: pos_show(n.num) 
   }
+// Converts Inte to Nat
+inte_to_nat(n: Inte): Nat
+  case n { 
+    neg: neg_to_nat(n.num)
+    pos: pos_to_nat(n.num)
+  }
 
 // Creates an int sign
 // true  = Positive 
@@ -97,22 +103,43 @@ int(sign: Bool, num: Nat): Inte
 // int(false, 1)     = +0
 // int(false, 2)     = -1
 // int(true,  2)     = +3
-inc(a: Inte): Inte  
-  ?inc
+inc(a: Inte): Inte
+  case a{
+    neg: case a.num{
+      one: Inte.pos(Pos.zero)
+      pred: Inte.neg(a.num.succ)
+    }
+    pos: Inte.pos(Pos.succ(a.num))
+  }
 
 // Decrements an Integer
 // int(false, 1) = -2
 // int(true,  2) = +1
 // int(true,  0) = -1
 dec(a: Inte): Inte
-  ?dec
+  case a{
+    neg: Inte.neg(Neg.pred(a.num))
+    pos: case a.num{
+      zero: Inte.neg(Neg.one)
+      succ: Inte.pos(a.num.pred)
+    }
+  }
 
 // Doubles an Integer
 // int(false, 4) = -8
 // int(false, 1) = -2
 // int(true,  2) = +4
 dbl(a: Inte): Inte 
-  ?dbl
+  let nata = inte_to_nat(a)
+  case a{
+    neg: case a.num{
+      one:
+      pred:
+    }
+    pos: case a.num{
+      
+    }
+  }
 
 // Adds two Integers
 // int(false, 4) + int(false, 2) = -6
